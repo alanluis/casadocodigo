@@ -1,9 +1,11 @@
 package br.com.casadocodigo.loja.controllers;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,10 +30,14 @@ public class ProductsController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String save(Product product, RedirectAttributes redirectAttributes) {
+	public ModelAndView save(@Valid Product product, BindingResult bindingResult,
+			RedirectAttributes redirectAttributes) {
+		if (bindingResult.hasErrors()) {
+			return form();
+		}
 		productDAO.save(product);
 		redirectAttributes.addFlashAttribute("sucesso", "Produto cadastrado com sucesso");
-		return "redirect:produtos";
+		return new ModelAndView("redirect:produtos");
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
